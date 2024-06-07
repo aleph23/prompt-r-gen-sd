@@ -187,7 +187,7 @@ def get_temp_path():
         try:
             temp_path = tempfile.gettempdir()
         except Exception as e:
-            Print ("" Use Python's TEMPFILE module to create a temporary file directory failed, error information: ", e)
+            print (" Use Python's TEMPFILE module to create a temporary file directory failed, error information: ", e)
     # Make sure that the temporary file directory exists
     if not os.path.exists(temp_path):
         try:

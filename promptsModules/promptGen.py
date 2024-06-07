@@ -43,7 +43,7 @@ def gen_lora_prompt():
     lora_list = get_config_value_by_key("lora")
     lyco_list = get_config_value_by_key("lyco")
     order_list = get_config_value_by_key("models_order")
-    # order_list为string，按照字符，拆分为数组
+    # order_list is a string; split into an array of characters
     order_arr = [char for char in order_list]
     prompt = ""
     if is_special_single(lora_list) or is_special_single(lyco_list):

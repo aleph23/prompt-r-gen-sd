@@ -80,7 +80,7 @@ def gen_action(gen_times, widget_lora, widget_lyco, widget_embeddings, model_ord
     project_config["bottom_wear"] = bottom_wear + 1
     project_config["leg_wear"] = leg_wear + 1
     project_config["panties"] = panties
-    project_config["shoes_type"] = shoes_type + 1
+    project_config["shoes_type"] = shoes_type
     project_config["body_with"] = body_with
     project_config["body_status"] = body_status
     project_config["body_description"] = body_desc
@@ -306,19 +306,22 @@ def get_tag_info(tag: Tag):
             cnt = f"\t<{tag.count / 10000:.2f}w>"
 
         if tag.count < 16:
-            suffix_color = "#63FFA2"  # 绿色
+        if tag.count < 16:
+            suffix_color = "#63FFA2"  # Light green
         elif tag.count < 128:
-            suffix_color = "#559BFF"  # 黄色
+            suffix_color = "#559BFF"  # Light blue
+        elif tag.count < 128:
+            suffix_color = "#559BFF"  # Yellow
         elif tag.count < 256:
-            suffix_color = "#3553FF"  # 浅蓝
+            suffix_color = "#3553FF"  # cyan blue
         elif tag.count < 512:
-            suffix_color = "#7214FF"  # 浅紫
+            suffix_color = "#7214FF"  # pale purple
         elif tag.count < 1024:
-            suffix_color = "#00EAFB"  # 青色
+            suffix_color = "#00EAFB"  # azure
         elif tag.count < 5210:
-            suffix_color = "#FF2700"  # 浅红
+            suffix_color = "#FF2700"  # Light Red
         else:
-            suffix_color = "#FF0035"  # 红色
+            suffix_color = "#FF0035"  # Red
 
     return tag.name, (cnt.replace("<", "&lt;").replace(">", "&gt;"), suffix_color)
 
@@ -358,6 +361,7 @@ def delete_lora_action(delete_lora_input):
     conn.close()
     DataBase.reConnect = True
     return lora_html
+    
 
 def load_lora_list():
     lora_result = Tag.get_all_lora_tag(DataBase.get_conn())
@@ -409,7 +413,7 @@ def save_train_tag_action(train_source_path, train_alias, train_comments, check_
 
         conn.close()
         DataBase.reConnect = True
-return f"Processing completed, total {count} folders"
+        return f"Processing completed, total {count} folders"
     else:
         json_str, alias_name, files_list = handle_train_tag(train_source_path, train_alias)
         conn = DataBase.get_conn()
@@ -419,6 +423,7 @@ return f"Processing completed, total {count} folders"
         conn.close()
         DataBase.reConnect = True
         return json_str
+        
 
 def update_train_tag_comments(train_model_dropdown, train_update_comments):
     conn = DataBase.get_conn()
@@ -445,7 +450,7 @@ def get_train_model_tags(train_input_model):
                      f"<div style='padding-right: 10px;'>{train.model_name}</div><div>{train.comments}</div>"
                      f"</div>")
 
-    table_html = "<table><tr><th>序列</th><th>prompt</th></tr>"
+    table_html = "<table><tr><th>Sequences</th><th>prompt</th></tr>"
     for index, image_file_tag in enumerate(source_tag):
         table_html += (f"<tr>"
                        f"<td>{index}</td>"
@@ -498,15 +503,11 @@ def on_ui_tabs():
             with gr.Column():
                 with gr.Row(variant="panel"):
                     key_dropdown = gr.Dropdown(choices=load_query_tips(), allow_custom_value=True, interactive=True, type="value", label="🔍", show_label=True)
-                        sort_drop = gr.Dropdown(["Quantity", "Time"], value="Quantity", type="index", label="Sort method",
-                                            interactive=True)
+                    sort_drop = gr.Dropdown(["Quantity", "Time"], value="Quantity", type="index", label="Sort method", interactive=True)
                     check_res_show = gr.Checkbox(True, label="Resolution", info="Whether to display resolution", interactive=True)
-                    check_adetailer_show = gr.Checkbox(True, label="adetailer", info="Show adetailer prompt word",
-                                                       interactive=True)
-                    check_search_adetailer_prompt = gr.Checkbox(False, label="adetailer prompt", info="Search adetailer",
-                                                                interactive=True)
-                    limit_slider = gr.Slider(64, 5120, value=512, label="Search limit", step=4, min_width=600,
-                                             interactive=True)
+                    check_adetailer_show = gr.Checkbox(True, label="adetailer", info="Show adetailer prompt word", interactive=True)
+                    check_search_adetailer_prompt = gr.Checkbox(False, label="adetailer prompt", info="Search adetailer", interactive=True)
+                    limit_slider = gr.Slider(64, 5120, value=512, label="Search limit", step=4, min_width=600, interactive=True)
                 search_history = gr.HighlightedText(show_label=False)
                 with gr.Row():
                     search_button = gr.Button("search", variant='primary')
@@ -652,9 +653,9 @@ def on_ui_tabs():
                                      value="NULL", type="index", label="Shoes", info="", interactive=True)
                             with gr.Row():
                                 body_with = gr.Checkbox(False, label="body wrapping", info="Wrap something around, bondage, ribbon, chain")
-                                 body_status = gr.Checkbox(False, label="body status", info="wet, sweaty...")
-                                 body_desc = gr.Checkbox(False, label="Body description", info="Perfect figure, slim body...")
-                                 cloth_trim = gr.Checkbox(False, label="Clothes Decoration", info="lace, ribbons, gold, flowers, etc...")
+                                body_status = gr.Checkbox(False, label="body status", info="wet, sweaty...")
+                                body_desc = gr.Checkbox(False, label="Body description", info="Perfect figure, slim body...")
+                                cloth_trim = gr.Checkbox(False, label="Clothes Decoration", info="lace, ribbons, gold, flowers, etc...")
                     with gr.Accordion("Character description", open=False):
                         with gr.Row():
                             profession = gr.Checkbox(False, label="Profession")
@@ -666,16 +667,16 @@ def on_ui_tabs():
                             enable_eye_color = gr.Checkbox(True, label="eye color")
                         with gr.Row():
                             hair_accessories = gr.Checkbox(True, label="headwear")
-                             neck_accessories = gr.Checkbox(True, label="neck accessories")
-                             earrings = gr.Checkbox(True, label="earrings")
-                             body_skin = gr.Checkbox(False, label="skin")
+                            neck_accessories = gr.Checkbox(True, label="neck accessories")
+                            earrings = gr.Checkbox(True, label="earrings")
+                            body_skin = gr.Checkbox(False, label="skin")
                         with gr.Row():
                             face_expression = gr.Dropdown(
                                  ["EMOTIONS", "SEXUAL", "SMILE", "SMUG", "Random of the above", "NULL"],
                                  value="SMILE",
                                  type="index", label="expression", interactive=True)
-                             add_girl_beautyful = gr.Checkbox(False, label="Short affix to describe a girl", info="")
-                             has_girl_desc = gr.Checkbox(False, label="Long affix to describe girls", info="")
+                            add_girl_beautyful = gr.Checkbox(False, label="Short affix to describe a girl", info="")
+                            has_girl_desc = gr.Checkbox(False, label="Long affix to describe girls", info="")
 
                     with gr.Accordion("NSFW configuration", open=False):
                         with gr.Box():
@@ -685,15 +686,15 @@ def on_ui_tabs():
                                                          label="NSFW level",
                                                          info="Please make sure you know what you are doing! If you choose the unconventional type, the character clothing settings above will not take effect",
                                                          interactive=True)
-                                 is_nsfw = gr.Checkbox(False, label="Whether to add the nfsw affix")
-                                 is_uncensored = gr.Checkbox(False, label="Whether to add the uncensored affix")
-                                 is_simple_nude = gr.Checkbox(False, label="Is it simple nude mode", info="Nude mode is in effect")
-                                 nude_strong = gr.Checkbox(False, label="Whether to strengthen nude mode", info="Nude mode takes effect")
+                                is_nsfw = gr.Checkbox(False, label="Whether to add the nfsw affix")
+                                is_uncensored = gr.Checkbox(False, label="Whether to add the uncensored affix")
+                                is_simple_nude = gr.Checkbox(False, label="Is it simple nude mode", info="Nude mode is in effect")
+                                nude_strong = gr.Checkbox(False, label="Whether to strengthen nude mode", info="Nude mode takes effect")
                             with gr.Row():
                                 sexual_list_random_index_times = gr.Slider(0, 5, value=0, step=1,
                                                                             label="Sexy affix random number",
                                                                             interactive=True)
-                                 nude_list_random_index_times = gr.Slider(0, 9, value=0, step=1, label="Nude affix random number",
+                                nude_list_random_index_times = gr.Slider(0, 9, value=0, step=1, label="Nude affix random number",
                                                                           interactive=True)
                     with gr.Accordion("Lora Loha embedding control", open=False):
                         gr.Markdown(
@@ -706,34 +707,34 @@ def on_ui_tabs():
                                 widget_lora = gr.Textbox("", label="Lora【x】",
                                                           info="The format is as follows: 101, 101:0.6, Louis:0.65",
                                                           elem_id="rp_widget_lora")
-                                 widget_lyco = gr.Textbox("", label="lyco【y】",
+                                widget_lyco = gr.Textbox("", label="lyco【y】",
                                                           info="The format is as follows: 101, 101:0.6, add details: 1",
                                                           elem_id="rp_widget_lyco")
-                             with gr.Row():
-                                 widget_embeddings = gr.Textbox("", label="embeddings【z】",
+                            with gr.Row():
+                                widget_embeddings = gr.Textbox("", label="embeddings【z】",
                                                                 info="The format is as follows: 100, ul:0.6",
                                                                 elem_id="rp_widget_embeddings")
-                                 model_order = gr.Textbox("xyz", label="lora, lyco, embed order",
+                                model_order = gr.Textbox("xyz", label="lora, lyco, embed order",
                                                           info="The default is xyz order, that is, in the order of lora, lyco, emb")
                     with gr.Accordion("other", open=False):
                         with gr.Row():
                             has_starting = gr.Checkbox(True, label="Whether to use starting style", info="best quality, absurdres,")
-                             has_ending = gr.Checkbox(True, label="Add details", info="jewelry, ultra-detailed, 8k,")
-                             is_realistic = gr.Checkbox(False, label="Whether to add real affixes",
+                            has_ending = gr.Checkbox(True, label="Add details", info="jewelry, ultra-detailed, 8k,")
+                            is_realistic = gr.Checkbox(False, label="Whether to add real affixes",
                                                         info="realistic, photorealistic")
-                             add_colors = gr.Checkbox(False, label="Whether to add colorful affixes")
-                         with gr.Row():
-                             enable_day_weather = gr.Checkbox(False, label="Whether to add weather information")
-                             enable_light_effect = gr.Checkbox(True, label="Whether to add light effects")
-                             enable_image_tech = gr.Checkbox(False, label="Whether to enable image technology, such as blur")
+                            add_colors = gr.Checkbox(False, label="Whether to add colorful affixes")
+                        with gr.Row():
+                            enable_day_weather = gr.Checkbox(False, label="Whether to add weather information")
+                            enable_light_effect = gr.Checkbox(True, label="Whether to add light effects")
+                            enable_image_tech = gr.Checkbox(False, label="Whether to enable image technology, such as blur")
                         with gr.Row():
                             accessories_random_tims = gr.Slider(0, 8, value=0, step=1, label="Random number of accessories",
                                                                  interactive=True,
                                                                  info="rings, garters, etc.")
-                             object_random_times = gr.Slider(0, 8, value=0, step=1, label="item random number",
+                            object_random_times = gr.Slider(0, 8, value=0, step=1, label="item random number",
                                                              info="Flowers, ice and fire elements, etc.",
                                                              interactive=True)
-                             suffix_words_random_times = gr.Slider(0, 10, value=0, step=1, label="Adjective affix random number",
+                            suffix_words_random_times = gr.Slider(0, 10, value=0, step=1, label="Adjective affix random number",
                                                                    info="Some affixes related to fantasy and beauty",
                                                                    interactive=True)
 
@@ -741,20 +742,20 @@ def on_ui_tabs():
                         with gr.Box():
                             with gr.Row():
                                 assign_angle = gr.Textbox("null", label="Specify perspective")
-                                 assign_body_framing = gr.Textbox("null", label="Specify body frame")
-                                 assign_place = gr.Textbox("null", label="Specify location")
-                             with gr.Row():
-                                 assign_pose = gr.Textbox("null", label="Specify character action")
-                                 assign_job = gr.Textbox("null", label="Specify role")
-                                 assigin_expression = gr.Textbox("null", label="Specified character expression")
-                             with gr.Row():
-                                 assign_clothes = gr.Textbox("", label="Specify clothes")
-                                 assign_leg_wear = gr.Textbox("", label="Specify sock type")
-                                 assign_shoes = gr.Textbox("", label="Specify shoe type")
-                             with gr.Row():
-                                 assign_leg_wear_color = gr.Textbox("", label="Specify sock color")
-                                 assign_shoes_color = gr.Textbox("", label="Specify shoe color")
-                                 assign_hair_color = gr.Textbox("", label="Specify hair color")
+                                assign_body_framing = gr.Textbox("null", label="Specify body frame")
+                                assign_place = gr.Textbox("null", label="Specify location")
+                            with gr.Row():
+                                assign_pose = gr.Textbox("null", label="Specify character action")
+                                assign_job = gr.Textbox("null", label="Specify role")
+                                assigin_expression = gr.Textbox("null", label="Specified character expression")
+                            with gr.Row():
+                                assign_clothes = gr.Textbox("", label="Specify clothes")
+                                assign_leg_wear = gr.Textbox("", label="Specify sock type")
+                                assign_shoes = gr.Textbox("", label="Specify shoe type")
+                            with gr.Row():
+                                assign_leg_wear_color = gr.Textbox("", label="Specify sock color")
+                                assign_shoes_color = gr.Textbox("", label="Specify shoe color")
+                                assign_hair_color = gr.Textbox("", label="Specify hair color")
 
                     with gr.Box():
                         gr.Markdown("Manual entry")
@@ -765,14 +766,14 @@ def on_ui_tabs():
                     results = gr.Textbox("", label="Generated prompt", lines=20, show_copy_button=True, interactive=True)
                     with gr.Row():
                         gen_button = gr.Button("Generate prompt")
-                         send_button = gr.Button("Send to Vincent Picture")
+                        send_button = gr.Button("Send to Vincent Picture")
         with gr.Tab("other"):
             with gr.Column():
                 gr.HTML(open_sd_image_broswer_html(), label=None, show_label=False, interactive=True)
         with gr.Tab("View configuration"):
-             review_btn = gr.Button("Load excel configuration")
-             data_sheet = gr.DataFrame(
-                 headers=["sequence", "id", "type", "model name", "description"],
+            review_btn = gr.Button("Load excel configuration")
+            data_sheet = gr.DataFrame(
+                headers=["sequence", "id", "type", "model name", "description"],
                 datatype=['number', "str", "str", "str", "str"],
                 col_count=5,
                 interactive=False,

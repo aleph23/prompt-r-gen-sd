@@ -6,7 +6,7 @@ angle = ["view from above", "view from behind", "view from below", "view from si
 
 depth = ["atmospheric perspective", "wide angle", "panorama", "perspective", "vanishing point", "wide shot"]
 
-body_framing = ["face", "portrait", "upper body", "lower body", "cowboy shot", "close-up", "half body",
+body_framing = ["face", "portrait", "upper body", "lower body", "aerial shot", "close-up", "half body",
                 "3/4 shot", "feet out of frame", "profile"]
 
 focus = ["ass focus", "back focus", "breast focus", "eye focus", "face focus", "hip focus", "navel focus",
@@ -26,7 +26,7 @@ legwear_style = ["aran", "bow", "cross-laced", "fishnet", "fluffy", "frilled", "
                  "bridal", "stirrup", "trimmed", "fur-trimmed", "lace-trimmed", "ribbon-trimmed", "zipper",
                  "animal ear", "torn", "mismatched", "naked"]
 
-legwear_color = ["red", "black", "blue", "grey", "white", "gradient", "multicolored", "two-tone", "flesh-colored", "nude"]
+legwear_color = ["red", "black", "blue", "purple", "white", "gradient", "multicolored", "two-tone", "flesh-colored", "nude"]
 
 dress_color = ["black", "blue", "pink", "purple", "white", "multicolored", "two-tone", "red"]
 
@@ -114,9 +114,9 @@ hair_style = ["colored inner hair", "pixiecut hairstyle", "expressive hair", "fl
 
 hairLength = ["long", "shaved", "buzzcut", "short", "medium"]
 
-hair_others = ["bangs", "hair between eyes", "blunt bangs", "side blunt bangs"]
+hair_others = ["bangs", "twintail", "blunt bangs", "side blunt bangs"]
 
-eye_wear = ["bookish glasses", "steampunk goggles", "sunglasses"]
+eye_wear = ["bookish glasses", "steampunk goggles", "sunglasses", "aviators"]
 
 eyeColor = ["hazel", "green", "brown", "black", "grey", "purple", "pink",
             "red", "ice", "white", "sapphire", "turquoise", "amethyst", "aquamarine", "ruby", "coral",
@@ -129,9 +129,8 @@ eye_others = ["eyelashes", "big eyes", "dark eyeliner", "bright eyes", "red eyes
 hair_accessories = ["hair ornament", "hair tie", "hairband", "hair ribbon", "flower hair ornament",
                     "star hair ornament", "bell hair ornament", "butterfly hair ornament", "feather hair ornament",
                     "leaf hair ornament"]
-neck_accessories = [
-    "neckerchief", "necklace", "chain necklace", "flower necklace", "pearl necklace", "pendant", "neck ribbon",
-    "neck tassel", "charm", "beads", "choker"]
+neck_accessories = ["necklace", "chain necklace", "flower necklace", "pearl necklace", "pendant", "neck ribbon",
+    "charm", "beads", "choker"]
 
 earrings = ["hoop earrings", "stud earrings", "earclip", "earrings", "ear piercing"]
 
@@ -237,9 +236,9 @@ suffix_beautiful = ["radiant", "ethereal", "luminous", "vivid", "glowing", "elem
 
 day_time = ["evening", "night", "morning", "sunrise", "sunset", "twilight", "moonlit night"]
 
-weather = ["blizzard", "blue sky", "cloudy sky", "fog", "rain", "snow", "mist"]
+weather = ["blizzard", "blue sky", "cloudy sky", "fog", "rain", "snow", "light mist", "howling wind"]
 
-body_status = ["wet", "sweat"]
+body_status = ["wet", "sweat", "glistening", "muscular", "soft"]
 
 body_with = ["zentangle", "entangled", "chained", "bondage", "handcuffs", "leash", "ribbon bondage", "braid"]
 
@@ -288,7 +287,7 @@ class SexActType(IntEnum):
     SEX = 1
     STIMULATION = 2
     GROUP = 3
-    TENTACLES = 4
+    # TENTACLES = 4
 
 
 sex_act_stimulation = ["footjob", "feet", "armpit", "grinding", "kneepit", "paizuri", "thigh", "handjob",
@@ -297,7 +296,7 @@ sex_act_stimulation = ["footjob", "feet", "armpit", "grinding", "kneepit", "paiz
 sex_act_group = ["love train", "cooperative fellatio", "cooperative footjob", "cooperative breast smother", "orgy",
                  "reverse spitroast", "spitroast", "teamwork", "MMF threesome", "FFM threesome"]
 
-sex_act_tentacles = []
+# sex_act_tentacles = []
 
 sex_category = [
     ["groping", "handjob", "masturbation", "tail", "oral", "hug and suck",
@@ -1101,7 +1100,7 @@ def get_s_act_sex_prompt():
              + "(" + get_s_girl_desc() \
              + get_s_man_type_prompt() \
              + "sex), " \
-             + "vaginal, penis, blush, pussy, pussy juice, tong, penetration, " \
+             + "vaginal, penis, blush, pussy, wet pussy, tong, penetration, " \
              + get_s_bottom_prompt()
 
     return prompt
@@ -1114,21 +1113,21 @@ def get_s_act_group_prompt():
              + r_value \
              + ", group sex), " \
              + get_s_position() \
-             + "vaginal, penis, blush, pussy, pussy juice, tong, penetration, " \
+             + "vaginal, penis, blush, pussy, wet pussy, tong, penetration, " \
              + get_s_bottom_prompt()
     return prompt
 
 
-def get_s_act_tentacles_prompt():
-    prompt = get_realistic_prompt() + \
-             "(" + get_s_girl_desc() \
-             + get_random_from_list(sex_act_tentacles) + ", " \
-             + get_s_position() \
-             + ")," \
-             + "vaginal, blush, pussy, pussy juice, " \
-             + get_s_bottom_prompt()
-
-    return prompt
+#def get_s_act_tentacles_prompt():
+#    prompt = get_realistic_prompt() + \
+#             "(" + get_s_girl_desc() \
+#             + get_random_from_list(sex_act_tentacles) + ", " \
+#             + get_s_position() \
+#             + ")," \
+#             + "vaginal, blush, pussy, pussy juice, " \
+#             + get_s_bottom_prompt()
+#
+#    return prompt
 
 
 def get_s_bottom_prompt():
@@ -1143,7 +1142,7 @@ def get_s_bottom_prompt():
         + get_ribbon_others() \
         + get_shoes_prompt() \
         + get_accessories_mix_prompt() \
-        + "nude, jewelry, chain, ribbon, best quality, absurdres, ultra-detailed, 8k, " \
+        + "nude, chain, best quality, absurdres, ultra-detailed, 8k, " \
         + "\n\n"
 
 
@@ -1337,9 +1336,9 @@ project_config = {
     "assign_hair_color": "",  # Specify hair color
 
     # Decoration, items, adjectives
-    "accessories_random_tims": 3,  # max:6 NOTE：For some models, how to appear these prOMPTs may affect the perspective effect
-    "object_random_times": 0,  # max: 6
-    "suffix_words_random_times": 0,  # Sabbage dotted random number
+    "accessories_random_tims": 1,  # max:6 NOTE：For some models, how to appear these prOMPTs may affect the perspective effect
+    "object_random_times": 1,  # max: 6
+    "suffix_words_random_times": 1,  # Sabbage dotted random number
 
     # nsfw/sexual/nude
     "nsfw_type": NSFWType.NUDE,

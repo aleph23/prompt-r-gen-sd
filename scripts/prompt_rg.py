@@ -310,9 +310,9 @@ def get_tag_info(tag: Tag):
         elif tag.count < 128:
             suffix_color = "#559BFF"  # Yellow
         elif tag.count < 256:
-            suffix_color = "#3553FF"  # Pale cyan blue
+            suffix_color = "#3553FF"  # cyan blue
         elif tag.count < 512:
-            suffix_color = "#7214FF"  # shallow purple
+            suffix_color = "#7214FF"  # pale purple
         elif tag.count < 1024:
             suffix_color = "#00EAFB"  # azure
         elif tag.count < 5210:

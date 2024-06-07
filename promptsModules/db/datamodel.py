@@ -33,14 +33,23 @@ class Cursor:
 
 
 class DataBase:
+    """A class representing a database with methods to get a connection and initialize the database.
+
+    Explanation:
+    - The `get_conn` method returns a connection to the database, creating a new one if needed.
+    - The `init` method initializes the database by creating tables and functions.
+
+    Args:
+    - clz: The class itself.
+
+    Returns:
+    - Connection: A connection to the database.
+    """
+
     local = threading.local()
-
     _initing = False
-
     reConnect = False
-
     num = 0
-
     path = "tags.db"
 
     @classmethod
@@ -49,12 +58,11 @@ class DataBase:
         # for : sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that same thread
         if hasattr(clz.local, "conn") and clz.reConnect is False:
             return clz.local.conn
-        else:
-            conn = clz.init()
-            clz.local.conn = conn
-            clz.reConnect = False
+        conn = clz.init()
+        clz.local.conn = conn
+        clz.reConnect = False
 
-            return conn
+        return conn
 
     @classmethod
     def init(clz):
@@ -87,6 +95,15 @@ class DataBase:
 
 
 class Image:
+"""Converts the object to a dictionary representing file information.
+
+    Returns:
+    - FileInfoDict: A dictionary containing file information:
+        "type": "file", "id": self.id, "date": self.date, "created_date": self.date, "size": human_readable_size(self.size),
+        "is_under_scanned_path": True, "bytes": self.size, "name": os.path.basename(self.path),
+        "fullpath": self.path, "posPrompt": self.pos_prompt,
+    """
+
     def __init__(self, path, exif=None, pos_prompt="", size=0, date="", id=None):
         self.path = path
         self.exif = exif
@@ -129,10 +146,7 @@ class Image:
                 "SELECT * FROM image WHERE id = ? OR path = ?", (id_or_path, id_or_path)
             )
             row = cur.fetchone()
-            if row is None:
-                return None
-            else:
-                return cls.from_row(row)
+            return None if row is None else cls.from_row(row)
 
     @classmethod
     def get_by_ids(cls, conn: Connection, ids: List[int]) -> List["Image"]:

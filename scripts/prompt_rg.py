@@ -306,7 +306,10 @@ def get_tag_info(tag: Tag):
             cnt = f"\t<{tag.count / 10000:.2f}w>"
 
         if tag.count < 16:
-            suffix_color = "#63FFA2"  # Green
+        if tag.count < 16:
+            suffix_color = "#63FFA2"  # Light green
+        elif tag.count < 128:
+            suffix_color = "#559BFF"  # Light blue
         elif tag.count < 128:
             suffix_color = "#559BFF"  # Yellow
         elif tag.count < 256:

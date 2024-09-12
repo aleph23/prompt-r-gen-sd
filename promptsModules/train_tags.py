@@ -33,7 +33,7 @@ def handle_train_tag(folder_path, alias_name:str):
             file_text_lsit.append(file_content)
 
     # Use the regular expression to extract the label in the text
-    tags = re.findall(r'\b([^\s,]+)\b', file_content)
+    tags = re.findall(r'\s*([^,]+?)\s*(?=,|$)', file_content)
 
     # Update tag count
     tag_counter.update(tags)

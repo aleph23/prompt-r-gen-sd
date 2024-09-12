@@ -36,10 +36,9 @@ def get_model_input(com_value):
 
 
 ######### gen #########
-# 我有史以来写的最长的方法
+# The longest method I've ever written
 def gen_action(gen_times, widget_lora, widget_lyco, widget_embeddings, model_order, additional_prompt, angle,
-               body_framing, location,
-               pose_type,
+               body_framing, location, pose_type,
                dynamic_mode, breasts_size, body_wear, top_wear, bottom_wear, leg_wear, panties, shoes_type, body_with,
                body_status, body_desc, cloth_trim, profession, hair_color, add_hair_style, enable_eye_color,
                face_expression, add_girl_beautyful, has_girl_desc, nsfw_type, is_nsfw, is_uncensored, is_simple_nude,
@@ -81,7 +80,7 @@ def gen_action(gen_times, widget_lora, widget_lyco, widget_embeddings, model_ord
     project_config["bottom_wear"] = bottom_wear + 1
     project_config["leg_wear"] = leg_wear + 1
     project_config["panties"] = panties
-    project_config["shoes_type"] = shoes_type + 1
+    project_config["shoes_type"] = shoes_type
     project_config["body_with"] = body_with
     project_config["body_status"] = body_status
     project_config["body_description"] = body_desc
@@ -307,19 +306,22 @@ def get_tag_info(tag: Tag):
             cnt = f"\t<{tag.count / 10000:.2f}w>"
 
         if tag.count < 16:
-            suffix_color = "#63FFA2"  # 绿色
+        if tag.count < 16:
+            suffix_color = "#63FFA2"  # Light green
         elif tag.count < 128:
-            suffix_color = "#559BFF"  # 黄色
+            suffix_color = "#559BFF"  # Light blue
+        elif tag.count < 128:
+            suffix_color = "#559BFF"  # Yellow
         elif tag.count < 256:
-            suffix_color = "#3553FF"  # 浅蓝
+            suffix_color = "#3553FF"  # cyan blue
         elif tag.count < 512:
-            suffix_color = "#7214FF"  # 浅紫
+            suffix_color = "#7214FF"  # pale purple
         elif tag.count < 1024:
-            suffix_color = "#00EAFB"  # 青色
+            suffix_color = "#00EAFB"  # azure
         elif tag.count < 5210:
-            suffix_color = "#FF2700"  # 浅红
+            suffix_color = "#FF2700"  # Light Red
         else:
-            suffix_color = "#FF0035"  # 红色
+            suffix_color = "#FF0035"  # Red
 
     return tag.name, (cnt.replace("<", "&lt;").replace(">", "&gt;"), suffix_color)
 
@@ -352,13 +354,14 @@ def fetch_lyco_action():
 
 def delete_lora_action(delete_lora_input):
     if delete_lora_input is None or delete_lora_input == "":
-        raise gr.Error("请输入要删除的lora")
+        raise gr.Error("Please enter the lora")
     conn = DataBase.get_conn()
     Tag.remove_by_name(conn, delete_lora_input)
     lora_html = inner_fetch_lora(conn)
     conn.close()
     DataBase.reConnect = True
     return lora_html
+    
 
 def load_lora_list():
     lora_result = Tag.get_all_lora_tag(DataBase.get_conn())
@@ -370,7 +373,7 @@ def load_lora_list():
 
 
 def open_sd_image_broswer_html():
-    # 创建包含按钮的HTML
+    # Create HTML containing buttons
     html_code = f"""
     <!DOCTYPE html>
     <html>
@@ -379,9 +382,9 @@ def open_sd_image_broswer_html():
     </head>
     <body>
     
-    <h2>打开Infinite image browsing</h2>
+    <h2>OpenInfinite image browsing</h2>
     
-    <button style='width:100%;' onclick="window.location.href='/infinite_image_browsing'">点我</button>
+    <button style='width:100%;' onclick="window.location.href='/infinite_image_browsing'">I point</button>
     
     </body>
     </html>
@@ -393,7 +396,7 @@ def save_train_tag_action(train_source_path, train_alias, train_comments, check_
     if check_handle_train_folder:
         # check if folder
         if not os.path.isdir(train_source_path):
-            return f"{train_source_path}不是文件夹"
+            return f"{train_source_path}Not a folder"
         # get all sub folder
         conn = DataBase.get_conn()
         count = 0
@@ -410,7 +413,7 @@ def save_train_tag_action(train_source_path, train_alias, train_comments, check_
 
         conn.close()
         DataBase.reConnect = True
-        return f"处理完成，共{count}个文件夹"
+        return f"Processing completed, total {count} folders"
     else:
         json_str, alias_name, files_list = handle_train_tag(train_source_path, train_alias)
         conn = DataBase.get_conn()
@@ -420,12 +423,13 @@ def save_train_tag_action(train_source_path, train_alias, train_comments, check_
         conn.close()
         DataBase.reConnect = True
         return json_str
+        
 
 def update_train_tag_comments(train_model_dropdown, train_update_comments):
     conn = DataBase.get_conn()
     train = TrainTag(train_model_dropdown, tags_info="", comments=train_update_comments)
     train.update_comments(conn)
-    gr.Info(f"更新{train_model_dropdown}完成")
+    gr.Info(f"Update {train_model_dropdown} completed")
 
 
 def get_train_model_tags(train_input_model):
@@ -436,17 +440,17 @@ def get_train_model_tags(train_input_model):
     if train is None:
         return [], ""
     tags = json.loads(train.tags_info)
-    # 将字典按照值的数值降序排序
+    # # Sort the dictionary in descending order of values
     sorted_tags = sorted(tags.items(), key=lambda x: int(x[1]), reverse=True)
 
-    # 将排序后的结果转换为列表
+    # Convert sorted results to list
     results = [(key, str(value)) for key, value in sorted_tags]
 
     html_comments = (f"<div style='display: flex; color: aqua; font-size: 14px; font-weight: lighter; text-decoration: underline;'>"
                      f"<div style='padding-right: 10px;'>{train.model_name}</div><div>{train.comments}</div>"
                      f"</div>")
 
-    table_html = "<table><tr><th>序列</th><th>prompt</th></tr>"
+    table_html = "<table><tr><th>Sequences</th><th>prompt</th></tr>"
     for index, image_file_tag in enumerate(source_tag):
         table_html += (f"<tr>"
                        f"<td>{index}</td>"
@@ -499,21 +503,18 @@ def on_ui_tabs():
             with gr.Column():
                 with gr.Row(variant="panel"):
                     key_dropdown = gr.Dropdown(choices=load_query_tips(), allow_custom_value=True, interactive=True, type="value", label="🔍", show_label=True)
-                    sort_drop = gr.Dropdown(["数量", "时间"], value="数量", type="index", label="排序方式",
-                                            interactive=True)
-                    check_res_show = gr.Checkbox(True, label="分辨率", info="是否显示分辨率", interactive=True)
-                    check_adetailer_show = gr.Checkbox(True, label="adetailer", info="显示adetailer提示词",
-                                                       interactive=True)
-                    check_search_adetailer_prompt = gr.Checkbox(False, label="adetailer prompt", info="搜索adetailer",
-                                                                interactive=True)
-                    limit_slider = gr.Slider(64, 5120, value=512, label="搜索limit", step=4, min_width=600,
-                                             interactive=True)
+                    sort_drop = gr.Dropdown(["Quantity", "Time"], value="Quantity", type="index", label="Sort method", interactive=True)
+                    check_res_show = gr.Checkbox(True, label="Resolution", info="Whether to display resolution", interactive=True)
+                    check_adetailer_show = gr.Checkbox(True, label="adetailer", info="Show adetailer prompt word", interactive=True)
+                    check_search_adetailer_prompt = gr.Checkbox(False, label="adetailer prompt", info="Search adetailer", interactive=True)
+                    limit_slider = gr.Slider(64, 5120, value=512, label="Search limit", step=4, min_width=600, interactive=True)
                 search_history = gr.HighlightedText(show_label=False)
                 with gr.Row():
-                    search_button = gr.Button("搜索", variant='primary')
-                    next_query_button = gr.Button("下一页", size="sm", variant='secondary')
-                    refresh_dp_button = gr.Button("刷新下拉数据", variant="secondary")
+                    search_button = gr.Button("search", variant='primary')
+                    next_query_button = gr.Button("Next page", size="sm", variant='secondary')
+                    refresh_dp_button = gr.Button("Reload", variant="secondary")
                     search_info = gr.Textbox("", show_label=False, interactive=False)
+
                 html_table = gr.HTML("", label=None, show_label=False, interactive=False)
 
                 search_button.click(search_action,
@@ -533,28 +534,29 @@ def on_ui_tabs():
             with gr.Tab("Lora"):
                 with gr.Column():
                     with gr.Row(equal_height=False, variant="panel"):
-                        fetch_lora_btn = gr.Button("查询lora", variant='primary')
+                        fetch_lora_btn = gr.Button("Query lora", variant='primary')
                         delete_lora_input = gr.Textbox("", show_label=False)
-                        delete_lora_btn = gr.Button("删除lora", variant='secondary')
+                        delete_lora_btn = gr.Button("Delete lora", variant='secondary')
                     with gr.Row(equal_height=False):
                         lora_list_dropdown = gr.Dropdown(choices=load_lora_list(), allow_custom_value=True, interactive=True, type="value", show_label=False)
-                        score_slider = gr.Slider(0, 1, value=0, label="分数", step=0.05, interactive=True)
-                        score_btn = gr.Button("更新", variant='primary')
+                        score_slider = gr.Slider(0, 1, value=0, label="Fraction", step=0.05, interactive=True)
+                        score_btn = gr.Button("Reload", variant='primary')
                     html_loras = gr.HTML("", label=None, show_label=False, interactive=False)
                     fetch_lora_btn.click(fetch_lora_action, outputs=html_loras)
                     delete_lora_btn.click(delete_lora_action, inputs=[delete_lora_input], outputs=html_loras)
                     delete_lora_input.submit(delete_lora_action, inputs=[delete_lora_input], outputs=html_loras)
                     score_btn.click(update_lora_score_action, inputs=[lora_list_dropdown, score_slider], outputs=html_loras)
             with gr.Tab("Lyco"):
-                fetch_lyco_btn = gr.Button("查询lyco", variant='primary')
+                fetch_lyco_btn = gr.Button("Query lyco", variant='primary')
                 html_lyco = gr.HTML("", label=None, show_label=False, interactive=False)
                 fetch_lyco_btn.click(fetch_lyco_action, outputs=html_lyco)
             with gr.Tab("Tags"):
                 with gr.Row(equal_height=False):
                     train_input_model = gr.Dropdown(choices=load_train_models(), allow_custom_value=True, interactive=True, type="value", show_label=False)
-                    fetch_train_info_btn = gr.Button("查询train tags", variant='primary')
-                    refresh_train_models_btn = gr.Button("刷新下拉数据", variant="secondary")
-                train_tags_comments = gr.HTML("", label=None, show_label=False, interactive=False)
+                    fetch_train_info_btn = gr.Button("Query train tags", variant='primary')
+                    refresh_train_models_btn = gr.Button("Reload", variant="secondary")
+
+                    train_tags_comments = gr.HTML("", label=None, show_label=False, interactive=False)
                 tags_highlighted = gr.HighlightedText(show_label=False)
                 tag_source_list = gr.HTML("", label=None, show_label=False, interactive=False)
                 train_input_model.select(get_train_model_tags, inputs=[train_input_model],
@@ -562,31 +564,31 @@ def on_ui_tabs():
                 fetch_train_info_btn.click(get_train_model_tags, inputs=[train_input_model],
                                            outputs=[tags_highlighted, train_tags_comments, tag_source_list])
                 refresh_train_models_btn.click(reload_train_models, inputs=None, outputs=train_input_model)
-        with gr.Tab('提取Prompt'):
+        with gr.Tab('ExtractPrompt'):
             with gr.Tab("Images"):
                 with gr.Column():
                     with gr.Row():
-                        file_path = gr.Textbox("/notebooks/resource/outputs/20231225", label="文件路径", lines=1,
+                        file_path = gr.Textbox("/notebooks/resource/outputs/20231225", label="file path", lines=1,
                                                show_copy_button=True, interactive=True)
-                        check_force = gr.Checkbox(label='是否强制', show_label=True, info='')
-                    extract_btn = gr.Button("提取prompt", variant="primary")
+                        check_force = gr.Checkbox(label='Is it mandatory?', show_label=True, info='')
+                    extract_btn = gr.Button("Extract prompt", variant="primary")
                     with gr.Row():
-                        text2 = gr.Textbox(label="状态")
-                        img_cnt = gr.Textbox(label="图片数量")
+                        text2 = gr.Textbox(label="state")
+                        img_cnt = gr.Textbox(label="Number of pictures")
                     extract_btn.click(get_prompts_from_folder, inputs=[file_path, check_force], outputs=[text2, img_cnt])
                     file_path.submit(get_prompts_from_folder, inputs=[file_path, check_force], outputs=[text2, img_cnt])
             with gr.Tab("Train Source"):
                 with gr.Column():
                     with gr.Row():
-                        train_source_path = gr.Textbox("/notebooks/", label="训练的tag文件路径", lines=1,
+                        train_source_path = gr.Textbox("/notebooks/", label="Training tag file path", lines=1,
                                                        show_copy_button=True, interactive=True)
-                        train_alias = gr.Textbox(None, label="别名", lines=1, interactive=True)
-                        train_comments = gr.Textbox(None, label="添加备注，描述模型详情", lines=2, interactive=True)
-                        check_handle_train_folder = gr.Checkbox(False, label="是否处理文件夹",
-                                                                info="勾选则处理文件夹下所有子目录", interactive=True)
-                    train_result = gr.Textbox("", label="汇总结果", lines=1, show_copy_button=True, interactive=False)
+                        train_alias = gr.Textbox(None, label="Alias", lines=1, interactive=True)
+                        train_comments = gr.Textbox(None, label="Add notes to describe model details", lines=2, interactive=True)
+                        check_handle_train_folder = gr.Checkbox(False, label="Whether to process folders",
+                                                                info="If checked, all subdirectories under the folder will be processed.", interactive=True)
+                    train_result = gr.Textbox("", label="Summary results", lines=1, show_copy_button=True, interactive=False)
                     with gr.Row():
-                        train_tag_btn = gr.Button("汇总tag", variant="primary")
+                        train_tag_btn = gr.Button("Summary tag", variant="primary")
                     train_tag_btn.click(save_train_tag_action, inputs=[train_source_path, train_alias, train_comments, check_handle_train_folder],
                                         outputs=[train_result])
                     train_source_path.submit(save_train_tag_action, inputs=[train_source_path, train_alias, train_comments, check_handle_train_folder],
@@ -595,183 +597,183 @@ def on_ui_tabs():
                 with gr.Column():
                     with gr.Row(equal_height=False):
                         train_model_dropdown = gr.Dropdown(choices=load_train_models(), interactive=True, allow_custom_value=True, show_label=False)
-                        train_update_comments = gr.Textbox(None, label="添加备注，描述模型详情", lines=2, interactive=True)
-                    train_update_btn = gr.Button("更新备注", variant="primary")
+                        train_update_comments = gr.Textbox(None, label="Add notes to describe model details", lines=2, interactive=True)
+                    train_update_btn = gr.Button("Update notes", variant="primary")
                     train_update_btn.click(update_train_tag_comments, inputs=[train_model_dropdown, train_update_comments])
 
 
-        with gr.Tab("生成Prompt"):
+        with gr.Tab("Generate Prompt"):
             with gr.Row():
                 with gr.Column(scale=3):
-                    gr.Markdown("请修改以下配置")
+                    gr.Markdown("Please modify the following configuration")
 
                     with gr.Box():
                         with gr.Row():
-                            time_slider = gr.Slider(1, 6, value=1, label="随机生成条数", step=1, interactive=True)
-                    with gr.Accordion("视角、地点、动作", open=False):
+                            time_slider = gr.Slider(1, 6, value=1, label="Randomly generate numbers", step=1, interactive=True)
+                    with gr.Accordion("perspective, location, action", open=False):
                         with gr.Row():
-                            angle = gr.Checkbox(False, label="视角", info="正面，侧面，背面...")
-                            body_framing = gr.Checkbox(False, label="身体框架", info="肖像，半身，全身...")
-                            location = gr.Checkbox(False, label="地点", info="随机地点")
-                            pose_type = gr.Dropdown(['基础', '全身', '空NULL'], value='空NULL', type="index",
-                                                    label="动作类型",
+                            angle = gr.Checkbox(False, label="perspective", info="front, side, back...")
+                            body_framing = gr.Checkbox(False, label="body frame", info="portrait, half body, full body...")
+                            location = gr.Checkbox(False, label="Place", info="random location")
+                            pose_type = gr.Dropdown(['Basic', 'Whole body', 'NULL'], value='NULL', type="index",
+                                                    label="action type",
                                                     interactive=True,
-                                                    info="人物动作，站、坐、躺...")
-                            dynamic_mode = gr.Checkbox(False, label="动态模式",
-                                                       info="使用dynamic pose, angle，需对应配置勾选")
-                    with gr.Accordion("人物衣着", open=False):
+                                                    info="Character movements, standing, sitting, lying...")
+                            dynamic_mode = gr.Checkbox(False, label="dynamic mode",
+                                                       info="use dynamic pose, angle，Need to check the corresponding configuration")
+                    with gr.Accordion("Character clothing", open=False):
                         with gr.Column():
                             with gr.Row():
-                                breasts_size = gr.Dropdown(["medium", "large", "huge", "gigantic", "空NULL"],
-                                                           value="空NULL",
-                                                           label="胸大小描述", info="依次增大= =#", interactive=True)
+                                breasts_size = gr.Dropdown(["medium", "large", "huge", "gigantic", "NULL"],
+                                                           value="NULL",
+                                                            label="Breast size description", info="increase in sequence= =#", interactive=True)
                                 body_wear = gr.Dropdown(
-                                    ["裙子dress", "制服UNIFORM", "紧身衣BODYSUIT", "传统服饰TRADITIONAL",
-                                     "上下搭配(如上身体恤下身短裙)", "以上随机", "空NULL"], value="空NULL",
-                                    type="index", label="衣服", info="", interactive=True)
+                                    ["dress", "UNIFORM", "BODYSUIT", "TRADITIONAL",
+                                    "Top and bottom matching (such as top body shirt and bottom skirt)", "Above randomly", "Empty NULL"], value="Empty NULL",
+                                    type="index", label="clothing", info="", interactive=True)
                                 top_wear = gr.Dropdown(
-                                    ["衬衫SHIRTS", "外套COAT", "毛衣SWEATER", "其他OTHERS", "以上随机RANDOM"],
-                                    value="衬衫SHIRTS", type="index", label="上身衣物",
-                                    info="选择上下搭配(如上身体恤下身短裙)该配置生效", interactive=True)
-                                bottom_wear = gr.Dropdown(["裤子PANTS", "短裙SKIRT", "短裤SHORTS", "以上随机RANDOM"],
-                                                          value="短裙SKIRT", type="index", label="下身衣物",
-                                                          info="选择上下搭配(如上身体恤下身短裙)该配置生效",
+                                    ["SHIRTS", "COAT", "SWEATER", "OTHERS", "RANDOM above"],
+                                    value="SHIRTS", type="index", label="upper body clothing",
+                                    info="Select top and bottom matching (such as a top body shirt and a bottom skirt), this configuration will take effect", interactive=True)
+                                bottom_wear = gr.Dropdown(["PANTS", "SKIRT", "SHORTS", "RANDOM above"],
+                                                            value="SKIRT", type="index", label="Lower clothing",
+                                                            info="Select top and bottom matching (such as a top body shirt and a bottom skirt) and this configuration will take effect",
                                                           interactive=True)
                             with gr.Row():
                                 leg_wear = gr.Dropdown(
-                                    ["短袜SOCKS", "小腿袜KNEEHIGHS", "过膝袜OVERKNEEHIGHS", "大腿袜THIGHHIGHS",
-                                     "连裤袜PANTYHOSE",
-                                     "光腿BARE", "空NULL", "以上随机RANDOM"], value="空NULL", type="index",
-                                    label="袜子",
+                                   ["SOCKS", "Calf socks KNEEHIGHS", "Over the knee socks OVERKNEEHIGHS", "Thigh socks THIGHHIGHS",
+                                      "PANTYHOSE",
+                                      "Bare legs BARE", "Empty NULL", "Above random RANDOM"], value="Empty NULL", type="index",
+                                     label="socks",
                                     interactive=True)
-                                panties = gr.Checkbox(False, label="内裤", info="勾选则随机给生成一种内裤类型")
+                                panties = gr.Checkbox(False, label="Pants", info="If checked, a type of panties will be randomly generated")
                                 shoes_type = gr.Dropdown(
-                                    ["靴子BOOTS", "高跟鞋HIGHHEELS", "凉鞋SANDALS", "拖鞋SLIPPERS", "光脚BARE",
-                                     "空NULL"],
-                                    value="空NULL", type="index", label="鞋子", info="", interactive=True)
+                                   ["BOOTS", "HIGHHEELS", "SANDALS", "SLIPPERS", "BARE",
+                                      "Empty NULL"],
+                                     value="NULL", type="index", label="Shoes", info="", interactive=True)
                             with gr.Row():
-                                body_with = gr.Checkbox(False, label="身体缠绕物", info="缠绕一些东西，束缚，丝带，链条")
-                                body_status = gr.Checkbox(False, label="身体状态", info="湿身、出汗...")
-                                body_desc = gr.Checkbox(False, label="身体描述", info="完美身材，纤细身体...")
-                                cloth_trim = gr.Checkbox(False, label="衣服装饰", info="蕾丝，丝带，金色，花等等...")
-                    with gr.Accordion("人物描述", open=False):
+                                body_with = gr.Checkbox(False, label="body wrapping", info="Wrap something around, bondage, ribbon, chain")
+                                body_status = gr.Checkbox(False, label="body status", info="wet, sweaty...")
+                                body_desc = gr.Checkbox(False, label="Body description", info="Perfect figure, slim body...")
+                                cloth_trim = gr.Checkbox(False, label="Clothes Decoration", info="lace, ribbons, gold, flowers, etc...")
+                    with gr.Accordion("Character description", open=False):
                         with gr.Row():
-                            profession = gr.Checkbox(False, label="职业")
-                            people_cnt = gr.Slider(0, 8, value=1, label="人物数量", step=1, interactive=True)
+                            profession = gr.Checkbox(False, label="Profession")
+                            people_cnt = gr.Slider(0, 8, value=1, label="Number of characters", step=1, interactive=True)
                         with gr.Row():
-                            hair_length = gr.Checkbox(True, label="头发长度")
-                            hair_color = gr.Checkbox(True, label="头发颜色", interactive=True)
-                            add_hair_style = gr.Checkbox(False, label="头发风格")
-                            enable_eye_color = gr.Checkbox(True, label="眼睛颜色")
+                            hair_length = gr.Checkbox(True, label="hair length")
+                            hair_color = gr.Checkbox(True, label="Hair color", interactive=True)
+                            add_hair_style = gr.Checkbox(False, label="hair style")
+                            enable_eye_color = gr.Checkbox(True, label="eye color")
                         with gr.Row():
-                            hair_accessories = gr.Checkbox(True, label="头饰")
-                            neck_accessories = gr.Checkbox(True, label="颈部饰物")
-                            earrings = gr.Checkbox(True, label="耳环")
-                            body_skin = gr.Checkbox(False, label="皮肤")
+                            hair_accessories = gr.Checkbox(True, label="headwear")
+                            neck_accessories = gr.Checkbox(True, label="neck accessories")
+                            earrings = gr.Checkbox(True, label="earrings")
+                            body_skin = gr.Checkbox(False, label="skin")
                         with gr.Row():
                             face_expression = gr.Dropdown(
-                                ["情绪EMOTIONS", "诱惑的SEXUAL", "笑容SMILE", "俏皮的SMUG", "以上随机", "空NULL"],
-                                value="笑容SMILE",
-                                type="index", label="表情", interactive=True)
-                            add_girl_beautyful = gr.Checkbox(False, label="描述妹子的短词缀", info="")
-                            has_girl_desc = gr.Checkbox(False, label="描述妹子的长词缀", info="")
+                                 ["EMOTIONS", "SEXUAL", "SMILE", "SMUG", "Random of the above", "NULL"],
+                                 value="SMILE",
+                                 type="index", label="expression", interactive=True)
+                            add_girl_beautyful = gr.Checkbox(False, label="Short affix to describe a girl", info="")
+                            has_girl_desc = gr.Checkbox(False, label="Long affix to describe girls", info="")
 
-                    with gr.Accordion("NSFW配置", open=False):
+                    with gr.Accordion("NSFW configuration", open=False):
                         with gr.Box():
                             with gr.Row():
-                                nsfw_type = gr.Dropdown(["裸NUDE", "性感SEXUAL", "常规NOTNSFW"], value="常规NOTNSFW",
-                                                        type="index",
-                                                        label="NSFW等级",
-                                                        info="请确保你知道自己在干嘛！选择非常规类型，上面的人物衣服设置不生效",
-                                                        interactive=True)
-                                is_nsfw = gr.Checkbox(False, label="是否添加nfsw词缀")
-                                is_uncensored = gr.Checkbox(False, label="是否添加uncensored词缀")
-                                is_simple_nude = gr.Checkbox(False, label="是否是简单的nude模式", info="裸模式生效")
-                                nude_strong = gr.Checkbox(False, label="是否加强nude模式", info="裸模式生效")
+                                nsfw_type = gr.Dropdown(["NUDE", "SEXUAL", "Regular NOTNSFW"], value="Regular NOTNSFW",
+                                                         type="index",
+                                                         label="NSFW level",
+                                                         info="Please make sure you know what you are doing! If you choose the unconventional type, the character clothing settings above will not take effect",
+                                                         interactive=True)
+                                is_nsfw = gr.Checkbox(False, label="Whether to add the nfsw affix")
+                                is_uncensored = gr.Checkbox(False, label="Whether to add the uncensored affix")
+                                is_simple_nude = gr.Checkbox(False, label="Is it simple nude mode", info="Nude mode is in effect")
+                                nude_strong = gr.Checkbox(False, label="Whether to strengthen nude mode", info="Nude mode takes effect")
                             with gr.Row():
                                 sexual_list_random_index_times = gr.Slider(0, 5, value=0, step=1,
-                                                                           label="性感词缀随机数",
-                                                                           interactive=True)
-                                nude_list_random_index_times = gr.Slider(0, 9, value=0, step=1, label="裸体词缀随机数",
-                                                                         interactive=True)
-                    with gr.Accordion("Lora Loha embedding控制", open=False):
+                                                                            label="Sexy affix random number",
+                                                                            interactive=True)
+                                nude_list_random_index_times = gr.Slider(0, 9, value=0, step=1, label="Nude affix random number",
+                                                                          interactive=True)
+                    with gr.Accordion("Lora Loha embedding control", open=False):
                         gr.Markdown(
                             """
-                            关于lora/loha/embedding详细配置使用：[点我查看](https://github.com/HeathWang/prompt-r-gen-sd#loralohaembedding%E6%8E%A7%E5%88%B6%E8%AF%B4%E6%98%8E)
+                            Regarding the detailed configuration and use of lora/loha/embedding: [Click here to view](https://github.com/HeathWang/prompt-r-gen-sd#loralohaembedding%E6%8E%A7%E5%88%B6%E8% AF%B4%E6%98%8E)
                             """
                         )
                         with gr.Box():
                             with gr.Row():
                                 widget_lora = gr.Textbox("", label="Lora【x】",
-                                                         info="格式如下：101, 101:0.6, 路易斯:0.65",
-                                                         elem_id="rp_widget_lora")
+                                                          info="The format is as follows: 101, 101:0.6, Louis:0.65",
+                                                          elem_id="rp_widget_lora")
                                 widget_lyco = gr.Textbox("", label="lyco【y】",
-                                                         info="格式如下：101, 101:0.6, 添加细节:1",
-                                                         elem_id="rp_widget_lyco")
+                                                          info="The format is as follows: 101, 101:0.6, add details: 1",
+                                                          elem_id="rp_widget_lyco")
                             with gr.Row():
                                 widget_embeddings = gr.Textbox("", label="embeddings【z】",
-                                                               info="格式如下：100, ul:0.6",
-                                                               elem_id="rp_widget_embeddings")
-                                model_order = gr.Textbox("xyz", label="lora，lyco，embed顺序",
-                                                         info="默认为xyz顺序，即按照lora，lyco，emb顺序")
-                    with gr.Accordion("其他", open=False):
+                                                                info="The format is as follows: 100, ul:0.6",
+                                                                elem_id="rp_widget_embeddings")
+                                model_order = gr.Textbox("xyz", label="lora, lyco, embed order",
+                                                          info="The default is xyz order, that is, in the order of lora, lyco, emb")
+                    with gr.Accordion("other", open=False):
                         with gr.Row():
-                            has_starting = gr.Checkbox(True, label="是否使用起手式", info="best quality, absurdres,")
-                            has_ending = gr.Checkbox(True, label="添加细节", info="jewelry, ultra-detailed, 8k,")
-                            is_realistic = gr.Checkbox(False, label="是否添加真实词缀",
-                                                       info="realistic, photorealistic")
-                            add_colors = gr.Checkbox(False, label="是否添加多彩词缀")
+                            has_starting = gr.Checkbox(True, label="Whether to use starting style", info="best quality, absurdres,")
+                            has_ending = gr.Checkbox(True, label="Add details", info="jewelry, ultra-detailed, 8k,")
+                            is_realistic = gr.Checkbox(False, label="Whether to add real affixes",
+                                                        info="realistic, photorealistic")
+                            add_colors = gr.Checkbox(False, label="Whether to add colorful affixes")
                         with gr.Row():
-                            enable_day_weather = gr.Checkbox(False, label="是否添加天气信息")
-                            enable_light_effect = gr.Checkbox(True, label="是否添加灯光效果")
-                            enable_image_tech = gr.Checkbox(False, label="是否开启图像技术，如模糊")
+                            enable_day_weather = gr.Checkbox(False, label="Whether to add weather information")
+                            enable_light_effect = gr.Checkbox(True, label="Whether to add light effects")
+                            enable_image_tech = gr.Checkbox(False, label="Whether to enable image technology, such as blur")
                         with gr.Row():
-                            accessories_random_tims = gr.Slider(0, 8, value=0, step=1, label="饰物随机数",
-                                                                interactive=True,
-                                                                info="戒指，袜带等")
-                            object_random_times = gr.Slider(0, 8, value=0, step=1, label="物品随机数",
-                                                            info="花，冰火元素等",
-                                                            interactive=True)
-                            suffix_words_random_times = gr.Slider(0, 10, value=0, step=1, label="形容词缀随机数",
-                                                                  info="一些描述奇幻，美丽相关的词缀",
-                                                                  interactive=True)
+                            accessories_random_tims = gr.Slider(0, 8, value=0, step=1, label="Random number of accessories",
+                                                                 interactive=True,
+                                                                 info="rings, garters, etc.")
+                            object_random_times = gr.Slider(0, 8, value=0, step=1, label="item random number",
+                                                             info="Flowers, ice and fire elements, etc.",
+                                                             interactive=True)
+                            suffix_words_random_times = gr.Slider(0, 10, value=0, step=1, label="Adjective affix random number",
+                                                                   info="Some affixes related to fantasy and beauty",
+                                                                   interactive=True)
 
-                    with gr.Accordion("精准控制项", open=False):
+                    with gr.Accordion("Precise controls", open=False):
                         with gr.Box():
                             with gr.Row():
-                                assign_angle = gr.Textbox("null", label="指定视角")
-                                assign_body_framing = gr.Textbox("null", label="指定身体框架")
-                                assign_place = gr.Textbox("null", label="指定地点")
+                                assign_angle = gr.Textbox("null", label="Specify perspective")
+                                assign_body_framing = gr.Textbox("null", label="Specify body frame")
+                                assign_place = gr.Textbox("null", label="Specify location")
                             with gr.Row():
-                                assign_pose = gr.Textbox("null", label="指定人物动作")
-                                assign_job = gr.Textbox("null", label="指定角色")
-                                assigin_expression = gr.Textbox("null", label="指定人物表情")
+                                assign_pose = gr.Textbox("null", label="Specify character action")
+                                assign_job = gr.Textbox("null", label="Specify role")
+                                assigin_expression = gr.Textbox("null", label="Specified character expression")
                             with gr.Row():
-                                assign_clothes = gr.Textbox("", label="指定衣服")
-                                assign_leg_wear = gr.Textbox("", label="指定袜子类型")
-                                assign_shoes = gr.Textbox("", label="指定鞋子类型")
+                                assign_clothes = gr.Textbox("", label="Specify clothes")
+                                assign_leg_wear = gr.Textbox("", label="Specify sock type")
+                                assign_shoes = gr.Textbox("", label="Specify shoe type")
                             with gr.Row():
-                                assign_leg_wear_color = gr.Textbox("", label="指定袜子颜色")
-                                assign_shoes_color = gr.Textbox("", label="指定鞋子颜色")
-                                assign_hair_color = gr.Textbox("", label="指定头发颜色")
+                                assign_leg_wear_color = gr.Textbox("", label="Specify sock color")
+                                assign_shoes_color = gr.Textbox("", label="Specify shoe color")
+                                assign_hair_color = gr.Textbox("", label="Specify hair color")
 
                     with gr.Box():
-                        gr.Markdown("手动输入项")
+                        gr.Markdown("Manual entry")
                         with gr.Row():
-                            additional_prompt = gr.Textbox("", label="额外的prompt")
+                            additional_prompt = gr.Textbox("", label="additional prompts")
                 with gr.Column(scale=1):
-                    gr.Markdown("prompt输出：")
-                    results = gr.Textbox("", label="生成的prompt", lines=20, show_copy_button=True, interactive=True)
+                    gr.Markdown("prompt output：")
+                    results = gr.Textbox("", label="Generated prompt", lines=20, show_copy_button=True, interactive=True)
                     with gr.Row():
-                        gen_button = gr.Button("生成prompt")
-                        send_button = gr.Button("发送到文生图")
-        with gr.Tab("其他"):
+                        gen_button = gr.Button("Generate prompt")
+                        send_button = gr.Button("Send to Vincent Picture")
+        with gr.Tab("other"):
             with gr.Column():
                 gr.HTML(open_sd_image_broswer_html(), label=None, show_label=False, interactive=True)
-        with gr.Tab("查看配置"):
-            review_btn = gr.Button("加载excel配置")
+        with gr.Tab("View configuration"):
+            review_btn = gr.Button("Load excel configuration")
             data_sheet = gr.DataFrame(
-                headers=["序列", "id", "类型", "模型名", "描述"],
+                headers=["sequence", "id", "type", "model name", "description"],
                 datatype=['number', "str", "str", "str", "str"],
                 col_count=5,
                 interactive=False,

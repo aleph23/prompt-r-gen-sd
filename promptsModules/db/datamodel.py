@@ -33,14 +33,23 @@ class Cursor:
 
 
 class DataBase:
+    """A class representing a database with methods to get a connection and initialize the database.
+
+    Explanation:
+    - The `get_conn` method returns a connection to the database, creating a new one if needed.
+    - The `init` method initializes the database by creating tables and functions.
+
+    Args:
+    - clz: The class itself.
+
+    Returns:
+    - Connection: A connection to the database.
+    """
+
     local = threading.local()
-
     _initing = False
-
     reConnect = False
-
     num = 0
-
     path = "tags.db"
 
     @classmethod
@@ -49,16 +58,15 @@ class DataBase:
         # for : sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that same thread
         if hasattr(clz.local, "conn") and clz.reConnect is False:
             return clz.local.conn
-        else:
-            conn = clz.init()
-            clz.local.conn = conn
-            clz.reConnect = False
+        conn = clz.init()
+        clz.local.conn = conn
+        clz.reConnect = False
 
-            return conn
+        return conn
 
     @classmethod
     def init(clz):
-        # 创建连接并打开数据库
+        # Create a connection and open the database
         conn = connect(
             clz.path if os.path.isabs(clz.path) else os.path.join(cwd, clz.path)
         )
@@ -82,11 +90,20 @@ class DataBase:
             conn.commit()
         clz.num += 1
         if is_dev:
-            print(f"当前连接数{clz.num}")
+            print(f"Current connection number{clz.num}")
         return conn
 
 
 class Image:
+"""Converts the object to a dictionary representing file information.
+
+    Returns:
+    - FileInfoDict: A dictionary containing file information:
+        "type": "file", "id": self.id, "date": self.date, "created_date": self.date, "size": human_readable_size(self.size),
+        "is_under_scanned_path": True, "bytes": self.size, "name": os.path.basename(self.path),
+        "fullpath": self.path, "posPrompt": self.pos_prompt,
+    """
+
     def __init__(self, path, exif=None, pos_prompt="", size=0, date="", id=None):
         self.path = path
         self.exif = exif
@@ -129,10 +146,7 @@ class Image:
                 "SELECT * FROM image WHERE id = ? OR path = ?", (id_or_path, id_or_path)
             )
             row = cur.fetchone()
-            if row is None:
-                return None
-            else:
-                return cls.from_row(row)
+            return None if row is None else cls.from_row(row)
 
     @classmethod
     def get_by_ids(cls, conn: Connection, ids: List[int]) -> List["Image"]:
@@ -758,7 +772,7 @@ class Folder:
             if not os.path.exists(folder_path):
                 return False
             cur.execute("SELECT * FROM folders WHERE path=?", (folder_path,))
-            folder_record = cur.fetchone()  # 如果这个文件夹没有记录，或者修改时间与数据库不同，则需要修改
+            folder_record = cur.fetchone()  # If this folder is not recorded, or the modification time is different from the database, you need to modify
             return not folder_record or (
                 folder_record[2] != get_modified_date(folder_path)
             )

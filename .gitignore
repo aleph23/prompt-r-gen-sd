@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.xlsx
 
 # C extensions
 *.so
@@ -160,3 +161,5 @@ cython_debug/
 .idea/
 promptsModules/prompts.txt
 /tags.db
+promptsModules/modelsConfig.xlsx
+promptsModules/modelsConfig.xlsx.bak

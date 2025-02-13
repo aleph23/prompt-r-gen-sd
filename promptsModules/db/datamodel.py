@@ -950,9 +950,7 @@ class PromptRecord:
                 (prompt_id,)
             )
             row = cur.fetchone()
-            if row is None:
-                return None
-            return cls.from_row(row)
+            return None if row is None else cls.from_row(row)
 
     @classmethod
     def search(cls, conn: Connection, search_text: str = None, is_meta: bool = False, p_type: str = None):

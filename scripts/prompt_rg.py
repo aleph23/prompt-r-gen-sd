@@ -403,10 +403,7 @@ def get_train_model_tags(train_input_model):
 def load_train_models(is_flux=True):
     conn = DataBase.get_conn()
     train_models = TrainTag.get_all(conn, is_flux=is_flux)
-    names = []
-    for train in train_models:
-        names.append(train.model_name)
-    return names
+    return [train.model_name for train in train_models]
 
 
 def reload_train_models(check_flux_flag: bool):

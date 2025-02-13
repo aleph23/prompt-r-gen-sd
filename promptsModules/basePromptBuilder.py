@@ -302,7 +302,7 @@ sex_category = [
     ["groping", "handjob", "masturbation", "tail", "oral", "hug and suck",
      "licking testicle", "sitting on face", "sitting on face"],
     ["group sex", "bisexual", "bisexual female", "daisy chain", "gangbang", "double penetration",
-     "triple penetration" "love train", "cooperative fellatio", "cooperative footjob", "multiple breast smother",
+     "triple penetration", "love train", "cooperative fellatio", "cooperative footjob", "multiple breast smother",
      "orgy", "reverse spitroast", "spitroast", "teamwork", "threesome"],
     ["after sex", "after anal", "after buttjob", "after fellatio", "after fingering",
      "after insertion", "after masturbation", "after oral", "after paizuri", "after rape", "after urethral",

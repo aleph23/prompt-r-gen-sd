@@ -171,10 +171,9 @@ class Image:
                         )"""
             )
             cur.execute("CREATE INDEX IF NOT EXISTS image_idx_path ON image(path)")
-            cur.execute("PRAGMA table_info(image)")
-            columns = [column[1] for column in cur.fetchall()]
-            if "is_flux" not in columns:
-                cur.execute("ALTER TABLE image ADD COLUMN is_flux INTEGER DEFAULT 0")
+            # NOTE: Inline schema alterations have been removed.
+            # Use a proper migration or schema versioning strategy (e.g., Alembic)
+            # to handle table modifications in the future.
 
     @classmethod
     def count(cls, conn):

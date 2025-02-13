@@ -216,6 +216,6 @@ def start_run_comfyui_workflow(origin_workflow, prompt, gen_num, lora_first, lor
 
         if i < gen_num - 1:
             time.sleep(1)
-            print(f"Continuing to next execution...")
+            print("Continuing to next execution...")
 
     return result

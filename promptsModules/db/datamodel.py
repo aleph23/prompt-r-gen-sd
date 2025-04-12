@@ -131,10 +131,7 @@ class Image:
                 "SELECT * FROM image WHERE id = ? OR path = ?", (id_or_path, id_or_path)
             )
             row = cur.fetchone()
-            if row is None:
-                return None
-            else:
-                return cls.from_row(row)
+            return None if row is None else cls.from_row(row)
 
     @classmethod
     def get_by_ids(cls, conn: Connection, ids: List[int]) -> List["Image"]:

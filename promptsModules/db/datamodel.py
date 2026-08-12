@@ -867,13 +867,9 @@ class ExtraPath:
             return paths
 
     @classmethod
-    def remove(
-        cls,
-        conn,
-        path: str,
-        type: Optional[ExtraPathType] = None,
-        img_search_dirs: Optional[List[str]] = [],
-    ):
+    def remove(cls, conn, path: str, type: Optional[ExtraPathType] = None, img_search_dirs: Optional[List[str]] = None):
+        if img_search_dirs is None:
+            img_search_dirs = []
         with closing(conn.cursor()) as cur:
             sql = "DELETE FROM extra_path WHERE path = ?"
             path = os.path.normpath(path)

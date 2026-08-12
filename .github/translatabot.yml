@@ -1,0 +1,5 @@
+version: 1
+defaultPath: promptsModules/locale_file.ts # Path to the default translation file
+languages:
+  - relativePath: en.ts # Relative path to the auto-translated file
+    language: English # English name of the language to be translated to.

@@ -397,12 +397,11 @@ def open_folder(folder_path, file_path=None):
             subprocess.run(["open", "-R", file])
         elif os.name == "posix":
             subprocess.run(["xdg-open", file])
-    else:
-        if os.name == "nt":
-            subprocess.run(["explorer", folder])
-        elif sys.platform == "darwin":
-            subprocess.run(["open", folder])
-        elif os.name == "posix":
-            subprocess.run(["xdg-open", folder])
+    elif os.name == "nt":
+        subprocess.run(["explorer", folder])
+    elif sys.platform == "darwin":
+        subprocess.run(["open", folder])
+    elif os.name == "posix":
+        subprocess.run(["xdg-open", folder])
 
 

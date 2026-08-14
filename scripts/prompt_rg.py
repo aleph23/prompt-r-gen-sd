@@ -384,7 +384,7 @@ def open_sd_image_broswer_html():
     
     <h2>OpenInfinite image browsing</h2>
     
-    <button style='width:100%;' onclick="window.location.href='/infinite_image_browsing'">I point</button>
+    <button style='width:100%;' onclick="window.location.href='/infinite_image_browsing'">ClickHere!</button>
     
     </body>
     </html>
